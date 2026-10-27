@@ -4,6 +4,8 @@
 
 # ttc2sfnt
 
+[![CI](https://github.com/xiaohunqupo/ttc2sfnt/actions/workflows/ci.yml/badge.svg)](https://github.com/xiaohunqupo/ttc2sfnt/actions/workflows/ci.yml)
+
 English ｜ [简体中文](README.zh-CN.md)
 
 Split a TrueType Collection (`.ttc`) into standalone `.ttf` / `.otf` fonts. C++11, no third-party

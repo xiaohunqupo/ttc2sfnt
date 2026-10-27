@@ -4,6 +4,8 @@
 
 # ttc2sfnt
 
+[![CI](https://github.com/xiaohunqupo/ttc2sfnt/actions/workflows/ci.yml/badge.svg)](https://github.com/xiaohunqupo/ttc2sfnt/actions/workflows/ci.yml)
+
 [English](README.md) ｜ 简体中文
 
 把 TrueType Collection（`.ttc`）拆成独立的 `.ttf` / `.otf`。C++11，无第三方依赖，默认仅头文件

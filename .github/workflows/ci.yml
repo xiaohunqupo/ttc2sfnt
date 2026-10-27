@@ -1,0 +1,67 @@
+# Build and test the library on Windows and Linux, in both build modes.
+#
+# This is the workflow that was lost when ttc_tools was renamed to ttc2sfnt: the
+# option names below are the ones the current CMakeLists.txt defines.
+name: build-and-test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: windows ${{ matrix.arch }} head-only=${{ matrix.head_only }}
+    runs-on: windows-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, Win32]
+        head_only: ["ON", "OFF"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -A ${{ matrix.arch }}
+          -DTTC2SFNT_HEAD_ONLY=${{ matrix.head_only }}
+          -DTTC2SFNT_BUILD_TESTS=ON
+          -DTTC2SFNT_BUILD_SAMPLES=ON
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+  linux:
+    name: linux head-only=${{ matrix.head_only }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        head_only: ["ON", "OFF"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          -DTTC2SFNT_HEAD_ONLY=${{ matrix.head_only }}
+          -DTTC2SFNT_BUILD_TESTS=ON
+          -DTTC2SFNT_BUILD_SAMPLES=ON
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure

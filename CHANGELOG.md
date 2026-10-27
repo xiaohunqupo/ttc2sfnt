@@ -14,9 +14,13 @@
 - 新增项目 logo `docs/logo.png`（1536×611，白底原图），在 `README.md` 与 `README.zh-CN.md`
   顶部居中展示（420 px 宽，不随主题反色）。
 - 两篇 README 的目录表都补上 `docs/logo.png`。
+- 两篇 README 顶部加 CI 状态徽章（指向 `build-and-test` 工作流）。
 
 ### 内部
 
+- 恢复改名时丢失的 CI：重建 `.github/workflows/ci.yml`。Windows（`-A x64` / `-A Win32`）与
+  Linux 各自跑 `TTC2SFNT_HEAD_ONLY=ON` / `OFF` 两档，configure → build → ctest；另加
+  `workflow_dispatch`、同分支并发取消与 `contents: read` 最小权限。
 - 版本号升到 0.4.1：`TTC2SFNT_VERSION_PATCH` / `TTC2SFNT_VERSION_STRING` 与
   `test_version()` 里的断言同步更新（沿用"版本号在 `ttc2sfnt.h` 手写维护、测试断言跟着改"
   的做法）。
