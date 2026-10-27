@@ -585,8 +585,8 @@ static std::string find_real_font(int argc, char** argv)
 static void test_version()
 {
 	section("version");
-	CHECK(std::string(TTC2SFNT_VERSION_STRING) == "0.4.0");
-	CHECK(TTC2SFNT_VERSION_MAJOR == 0 && TTC2SFNT_VERSION_MINOR == 4 && TTC2SFNT_VERSION_PATCH == 0);
+	CHECK(std::string(TTC2SFNT_VERSION_STRING) == "0.4.1");
+	CHECK(TTC2SFNT_VERSION_MAJOR == 0 && TTC2SFNT_VERSION_MINOR == 4 && TTC2SFNT_VERSION_PATCH == 1);
 	CHECK(std::string(ttc2sfnt::error_name(ttc2sfnt::err_none)) == "err_none");
 }
 

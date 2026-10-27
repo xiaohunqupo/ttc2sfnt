@@ -1,5 +1,31 @@
 # 变更日志
 
+## 0.4.1
+
+文档发布：仓库改为中英双语并加入项目 logo。除版本宏的取值外没有代码变化，0.4.0 的调用方无需改动。
+
+### 文档
+
+- `README.md` 改为英文主页（GitHub 默认语言），原中文内容整体移到
+  [`README.zh-CN.md`](README.zh-CN.md)，两篇顶部互加语言链接。
+- 英文版按常规库 README 重排：新增 `Requirements`（C++11、MSVC `/W4` 与 GCC/Clang
+  `-Wall -Wextra`、CMake ≥ 3.12）、`Integration`、`Error codes` 三节；命令行补上源码里已有但
+  此前未列出的 `-v` / `-h`；其余章节与中文版信息量对齐。
+- 新增项目 logo `docs/logo.png`（1536×611，白底原图），在 `README.md` 与 `README.zh-CN.md`
+  顶部居中展示（420 px 宽，不随主题反色）。
+- 两篇 README 的目录表都补上 `docs/logo.png`。
+
+### 内部
+
+- 版本号升到 0.4.1：`TTC2SFNT_VERSION_PATCH` / `TTC2SFNT_VERSION_STRING` 与
+  `test_version()` 里的断言同步更新（沿用"版本号在 `ttc2sfnt.h` 手写维护、测试断言跟着改"
+  的做法）。
+
+### 兼容性
+
+- 除版本宏的取值外，公开头文件、函数签名、错误码、输出文件命名与构建开关都和 0.4.0 完全
+  一致。
+
 ## 0.4.0
 
 ### 改名（破坏）
