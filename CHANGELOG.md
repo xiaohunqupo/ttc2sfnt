@@ -5,13 +5,11 @@
 *Every item is Chinese first, then English in italics; tables and code blocks appear once, with
 bilingual column headers.*
 
-## 0.4.1
+## 0.5.0
 
-文档发布：仓库改为中英双语并加入项目 logo。除版本宏的取值外没有代码变化，0.4.0 的调用方无需改动。
+文档与内部整理发布：仓库改为中英双语、加入项目 logo、恢复 CI，生成的配置头文件也换成了带项目名的文件名与 include guard。公开 API 与行为不变。
 
-*Documentation release: the repository is bilingual now (Chinese/English) and carries a project
-logo. Nothing changed in the code beyond the values of the version macros, so 0.4.0 callers need no
-action.*
+*Documentation and housekeeping release: the repository is bilingual now, carries a project logo and a restored CI, and the generated config header got a project-named file name and include guard. The public API and the behaviour are unchanged.*
 
 ### 文档 / Documentation
 
@@ -63,21 +61,67 @@ action.*
   build → ctest — plus `workflow_dispatch`, per-ref concurrency cancellation and the minimal
   `contents: read` permission.*
 
-- 版本号升到 0.4.1：`TTC2SFNT_VERSION_PATCH` / `TTC2SFNT_VERSION_STRING` 与
-  `test_version()` 里的断言同步更新（沿用"版本号在 `ttc2sfnt.h` 手写维护、测试断言跟着改"
-  的做法）。
+- 生成的配置头文件从 `inc/ttc2sfnt/config.h.in` 改名为
+  `inc/ttc2sfnt/ttc2sfnt_config.h.in`，产物从 `<build>/generated/ttc2sfnt/config.h` 改为
+  `<build>/generated/ttc2sfnt/ttc2sfnt_config.h`，所有头文件改成
+  `#include "ttc2sfnt/ttc2sfnt_config.h"`。`config.h` 是这套头里唯一一个通用文件名，和"库改名
+  就是为了不撞名"的理由对不上；其余头文件仍用 `ttc_*` 前缀，理由见 0.4.0（它们描述的是 TTC
+  格式）。
 
-  *Version bumped to 0.4.1: `TTC2SFNT_VERSION_PATCH` / `TTC2SFNT_VERSION_STRING` and the assertions
-  in `test_version()` moved together, following the existing rule — the version is maintained by
-  hand in `ttc2sfnt.h` and the test assertion follows it.*
+  *The generated config header was renamed from `inc/ttc2sfnt/config.h.in` to
+  `inc/ttc2sfnt/ttc2sfnt_config.h.in`, its output from `<build>/generated/ttc2sfnt/config.h` to
+  `<build>/generated/ttc2sfnt/ttc2sfnt_config.h`, and every header now includes
+  `"ttc2sfnt/ttc2sfnt_config.h"`. `config.h` was the last generic file name in an otherwise
+  project-named header set, which sat badly with the reason the library itself was renamed. The
+  other headers keep their `ttc_*` prefix for the reason given in 0.4.0: they describe the TTC
+  format.*
+
+- 该头文件加 include guard `_TTC2SFNT_CONFIG_H_`（此前只有 `#pragma once`）。生成的头文件会和
+  同一 include 路径下别的库的配置头挨着，`_CONFIG_H_` 这类通用名很可能已被对方定义——那样整个
+  文件会被静默跳过，调用方反而在 `TTC2SFNT_HEAD_ONLY_INLINE` 上报错。guard 现在与文件名、
+  项目名一致；模板注释里写清了原因与手工拷贝的具体改法。
+
+  *The header got the include guard `_TTC2SFNT_CONFIG_H_` (it carried only `#pragma once` before).
+  A generated config header ends up next to the config headers of other libraries on the same
+  include path, and a generic name such as `_CONFIG_H_` has a good chance of being defined there
+  already — the file would then be skipped silently, and the consumer would fail on
+  `TTC2SFNT_HEAD_ONLY_INLINE` instead. The guard now matches the file name and the project name,
+  and the template comment explains both that and the exact recipe for a manual copy.*
+
+- `src/ttc2sfnt/common.h` 的 `_TTC_COMMON_H_` 换成 `TTC2SFNT_COMMON_H`：旧名字既是通用名
+  （`common.h` 到处都是），又落在 C/C++ 的保留区（下划线加大写开头）。header-only 模式下这个
+  头会随 `.cpp` 一起进入调用方的翻译单元，撞车不是理论问题。
+
+  *`_TTC_COMMON_H_` in `src/ttc2sfnt/common.h` became `TTC2SFNT_COMMON_H`: the old name was
+  generic (`common.h` is everywhere) and, with its leading underscore and uppercase letter, in the
+  reserved part of the C/C++ identifier space. In the header only build the file reaches the
+  consumer's translation unit together with the `.cpp` files, so a collision was not theoretical.*
+
+- configure 时多打印一行生成头文件的路径，排查 include 路径问题时会用上。
+
+  *Configure now prints the path of the generated header, which helps when include paths go
+  wrong.*
+
+- 版本号升到 0.5.0（MINOR）：`config.h` 改名后旧路径不再存在，对直接包含它的人是破坏性变更，
+  因此不走 PATCH；`TTC2SFNT_VERSION_MINOR` / `TTC2SFNT_VERSION_STRING`（PATCH 归零）与
+  `test_version()` 里的断言同步更新。
+
+  *Version bumped to 0.5.0 (MINOR): renaming `config.h` removes the old path, a breaking change for
+  anyone who included it directly, so this is not a patch release. `TTC2SFNT_VERSION_MINOR` /
+  `TTC2SFNT_VERSION_STRING` (with PATCH reset to zero) and the assertions in `test_version()` moved
+  together.*
 
 ### 兼容性 / Compatibility
 
-- 除版本宏的取值外，公开头文件、函数签名、错误码、输出文件命名与构建开关都和 0.4.0 完全
-  一致。
+- 公开 API、函数签名、错误码、输出文件命名与构建开关不变；变化是一处头文件路径
+  （`ttc2sfnt/config.h` → `ttc2sfnt/ttc2sfnt_config.h`，只有直接包含过它的人受影响）、两处
+  include guard，以及版本宏的取值。通过 `ttc2sfnt/ttc2sfnt.h` 使用本库的代码无需改动。
 
-  *Apart from the values of the version macros, the public headers, function signatures, error
-  codes, output file naming and build switches are exactly what 0.4.0 had.*
+  *The public API, function signatures, error codes, output file naming and build switches are
+  unchanged; the differences are one header path (`ttc2sfnt/config.h` →
+  `ttc2sfnt/ttc2sfnt_config.h`, which only affects anyone who included it directly), two include
+  guards, and the values of the version macros. Code that goes through `ttc2sfnt/ttc2sfnt.h` needs
+  no action.*
 
 ## 0.4.0
 

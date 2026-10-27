@@ -12,7 +12,7 @@ Split a TrueType Collection (`.ttc`) into standalone `.ttf` / `.otf` fonts. C++1
 dependencies, header-only by default (same directory and build conventions as
 [shx_tools](https://github.com/xiaohunqupo/shx_tools)).
 
-Version 0.4.1 · [Changelog](CHANGELOG.md) · [`.ttc` format notes](docs/ttc_format.md)
+Version 0.5.0 · [Changelog](CHANGELOG.md) · [`.ttc` format notes](docs/ttc_format.md)
 
 > **Renamed from `ttc_tools`.** The project used to share its name with an unrelated TTC conversion
 > library, which made it easy to install or link the wrong one, so every public identifier moved to
@@ -66,7 +66,7 @@ chain:
 
 | Path | Contents |
 |---|---|
-| `inc/ttc2sfnt/` | Public headers, one file per topic. The version macros are maintained by hand in `ttc2sfnt.h`; `config.h.in` carries only the `TTC2SFNT_HEAD_ONLY` switch (CMake configures it into `<build>/generated/ttc2sfnt/config.h`). |
+| `inc/ttc2sfnt/` | Public headers, one file per topic. The version macros are maintained by hand in `ttc2sfnt.h`; `ttc2sfnt_config.h.in` carries only the `TTC2SFNT_HEAD_ONLY` switch (CMake configures it into `<build>/generated/ttc2sfnt/ttc2sfnt_config.h`). |
 | `src/ttc2sfnt/` | Implementation, one `.cpp` per header, plus the internal `common.h` (byte order, limits, checksum math). |
 | `sample/` | `ttcsplit` (split / list faces) and `ttcdump` (print table directories, verify checksums). |
 | `test/` | Single-file regression test with synthetic fixtures. |
@@ -77,13 +77,13 @@ The headers mirror the call hierarchy:
 
 ```
 ttc2sfnt.h  ─┬─ version macros TTC2SFNT_VERSION_* (maintained by hand)
-              ├─ config.h        (generated; only TTC2SFNT_HEAD_ONLY)
-              ├─ ttc_error.h     error_code / error_info / error_name
-              ├─ ttc_file.h      whole-file I/O, directory creation, UTF-8 paths
-              ├─ ttc_sfnt.h      Sfnt: one face's table directory + standalone rebuild
-              ├─ ttc_name.h      name table decoding (UTF-16BE / Latin-1), file name rules
-              ├─ ttc_collection.h Collection: collection header, ListTTC / UnzipTTC / UnzipTTCFace
-              └─ ttc_extract.h   UnzipTTCToDir / UnzipTTCFaceToFile
+              ├─ ttc2sfnt_config.h (generated; only TTC2SFNT_HEAD_ONLY)
+              ├─ ttc_error.h       error_code / error_info / error_name
+              ├─ ttc_file.h        whole-file I/O, directory creation, UTF-8 paths
+              ├─ ttc_sfnt.h        Sfnt: one face's table directory + standalone rebuild
+              ├─ ttc_name.h        name table decoding (UTF-16BE / Latin-1), file name rules
+              ├─ ttc_collection.h  Collection: collection header, ListTTC / UnzipTTC / UnzipTTCFace
+              └─ ttc_extract.h     UnzipTTCToDir / UnzipTTCFaceToFile
 ```
 
 ## Requirements
@@ -112,18 +112,21 @@ ctest --test-dir build --output-on-failure
 the version means editing that one place (and adding a `CHANGELOG.md` entry); the build system only
 reads the macros and never configures them into a generated header.
 
-`config.h` carries the build mode only and is not part of the source tree: `CMakeLists.txt`
-configures `#cmakedefine TTC2SFNT_HEAD_ONLY` from `inc/ttc2sfnt/config.h.in` into
-`<build>/generated/ttc2sfnt/config.h`, which is why the build directory has to come before `inc` on
-the include path. Without CMake, copy `config.h.in` to `inc/ttc2sfnt/config.h` and follow the
-comments there to decide whether to `#define TTC2SFNT_HEAD_ONLY`.
+`ttc2sfnt_config.h` carries the build mode only and is not part of the source tree: `CMakeLists.txt`
+configures `#cmakedefine TTC2SFNT_HEAD_ONLY` from `inc/ttc2sfnt/ttc2sfnt_config.h.in` into
+`<build>/generated/ttc2sfnt/ttc2sfnt_config.h`, which is why the build directory has to come before
+`inc` on the include path. Without CMake, copy `ttc2sfnt_config.h.in` to
+`inc/ttc2sfnt/ttc2sfnt_config.h` and follow the comments there to decide whether to
+`#define TTC2SFNT_HEAD_ONLY`. The file is named after the library, and so is its include guard
+(`_TTC2SFNT_CONFIG_H_`), so it cannot be mistaken for another library's `config.h` when several
+generated include directories end up on the same path.
 
 ## Integration
 
 | Approach | How |
 |---|---|
 | CMake subproject | `add_subdirectory(ttc2sfnt)`, then `target_link_libraries(app PRIVATE ttc2sfnt::ttc2sfnt)` |
-| Manual copy (header only) | Copy `inc/ttc2sfnt/` + `src/ttc2sfnt/*.cpp` + the generated `config.h`; put both directories on the include path |
+| Manual copy (header only) | Copy `inc/ttc2sfnt/` + `src/ttc2sfnt/*.cpp` + the generated `ttc2sfnt_config.h`; put both directories on the include path |
 | Manual copy (compile to a library) | Copy `inc/ttc2sfnt/` only and add `src/ttc2sfnt/*.cpp` to your project |
 
 ## Quick start
@@ -371,7 +374,7 @@ bug in the library cannot hide behind the same reader. On this machine: 327 asse
 **writes** `.ttf` / `.otf`. The two share the same slice of sfnt knowledge (table directories, 4-byte
 alignment, the `0xB1B0AFBA` checksum compensation), but one writes while the other splits. The
 directory layout, the location of the version macros (both in the umbrella header, maintained by the
-project) and `config.h.in` with the CMake `*_HEAD_ONLY` switch are kept identical as well.
+project) and `ttc2sfnt_config.h.in` with the CMake `*_HEAD_ONLY` switch are kept identical as well.
 `ttc2sfnt` does not depend on `shx_tools` and shares no code with it — each can be taken on its own
 as a standalone third-party library.
 

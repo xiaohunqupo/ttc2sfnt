@@ -5,7 +5,7 @@
  * \brief The collection header, and the extraction entry points that work on memory or on a file.
  */
 
-#include "ttc2sfnt/config.h"
+#include "ttc2sfnt/ttc2sfnt_config.h"
 #include "ttc2sfnt/ttc_error.h"
 #include "ttc2sfnt/ttc_sfnt.h"
 #include <cstddef>

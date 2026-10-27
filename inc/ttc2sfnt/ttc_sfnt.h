@@ -10,7 +10,7 @@
  * `head.checkSumAdjustment` so the result sums to `0xB1B0AFBA`.
  */
 
-#include "ttc2sfnt/config.h"
+#include "ttc2sfnt/ttc2sfnt_config.h"
 #include "ttc2sfnt/ttc_error.h"
 #include <cstddef>
 #include <cstdint>

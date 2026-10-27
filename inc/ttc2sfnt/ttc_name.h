@@ -6,7 +6,7 @@
  *        name a file system accepts.
  */
 
-#include "ttc2sfnt/config.h"
+#include "ttc2sfnt/ttc2sfnt_config.h"
 #include "ttc2sfnt/ttc_sfnt.h"
 #include <cstddef>
 #include <cstdint>

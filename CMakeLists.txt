@@ -16,12 +16,14 @@ option(TTC2SFNT_BUILD_SAMPLES "Build the sample programs" ON)
 
 # --------------------------------------------------------------------------------- configuration
 
-# inc/ttc2sfnt/config.h is not stored: it is configured from config.h.in so the switch above ends
-# up inside the header every source and consumer includes. It carries the build mode only - the
-# version macros live in ttc2sfnt.h.
+# inc/ttc2sfnt/ttc2sfnt_config.h is not stored: it is configured from ttc2sfnt_config.h.in so the
+# switch above ends up inside the header every source and consumer includes. It carries the build
+# mode only - the version macros live in ttc2sfnt.h. File name and include guard carry the project
+# name on purpose: a generated config.h would sit on the include path next to the config headers of
+# other libraries, where the obvious names are already taken; see the template for the reasoning.
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/ttc2sfnt/config.h.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/ttc2sfnt/config.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/inc/ttc2sfnt/ttc2sfnt_config.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/ttc2sfnt/ttc2sfnt_config.h"
     @ONLY)
 
 # ----------------------------------------------------------------------------------------- library
@@ -60,6 +62,7 @@ add_library(ttc2sfnt::ttc2sfnt ALIAS ttc2sfnt)
 target_compile_features(ttc2sfnt INTERFACE cxx_std_11)
 
 message(STATUS "ttc2sfnt: header only build = ${TTC2SFNT_HEAD_ONLY}")
+message(STATUS "ttc2sfnt: config header = ${CMAKE_CURRENT_BINARY_DIR}/generated/ttc2sfnt/ttc2sfnt_config.h")
 
 # Warnings for the executables, which in header only mode also compile the library.
 function(ttc2sfnt_executable target)

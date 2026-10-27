@@ -1,0 +1,64 @@
+#pragma once
+
+/*!
+ * \file ttc2sfnt_config.h
+ * \brief Compile time configuration of the library.
+ *
+ * The file is named after the library on purpose: `config.h` is the one header a build generates in
+ * the open, next to the config headers of every other library on the same include path, and this
+ * project was renamed once already to stop exactly that kind of accidental sharing.
+ *
+ * With CMake this file is generated from `inc/ttc2sfnt/ttc2sfnt_config.h.in` into
+ * `<build>/generated/ttc2sfnt/ttc2sfnt_config.h`, and both the sources and every consumer include
+ * that copy, so the build directory has to be on the include path in front of `inc`. Edit the
+ * template, never the generated copy under the build directory.
+ *
+ * Without CMake, copy the template to `inc/ttc2sfnt/ttc2sfnt_config.h` and turn
+ *
+ *     #cmakedefine TTC2SFNT_HEAD_ONLY
+ *
+ * into
+ *
+ *     #define TTC2SFNT_HEAD_ONLY      // header only build
+ *
+ * or delete that line for the compiled library.
+ *
+ * The file carries the build mode only - the version of the library is maintained by hand in
+ * `inc/ttc2sfnt/ttc2sfnt.h` and is not touched by the build system.
+ *
+ * `TTC2SFNT_HEAD_ONLY` mirrors the `TTC2SFNT_HEAD_ONLY` CMake option:
+ *  - `ON` (default): every function is declared `inline` through `TTC2SFNT_HEAD_ONLY_INLINE` and the
+ *    headers include the `.cpp` files themselves; the library is an INTERFACE target and `src` has
+ *    to stay on the include path;
+ *  - `OFF`: the files of `src` are compiled into a static library, and only `inc` is needed.
+ */
+
+/*!
+ * \brief Include guard.
+ *
+ * The guard follows the file name, which follows the project name. A generic name such as
+ * `_CONFIG_H_` has a good chance of being defined by another library's config header already, and
+ * this file would then be skipped without a diagnostic - the consumer would break on the missing
+ * `TTC2SFNT_HEAD_ONLY_INLINE`, and nothing in the error would point at the cause.
+ */
+#ifndef _TTC2SFNT_CONFIG_H_
+#define _TTC2SFNT_CONFIG_H_
+
+/*!
+ * The library uses the C `stdio` functions on purpose: it has no dependencies, and `FILE*` is the
+ * one file API every C++11 implementation has. MSVC marks those functions as deprecated with C4996,
+ * which would otherwise drown every translation unit of this dependency free library in warnings.
+ */
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#cmakedefine TTC2SFNT_HEAD_ONLY
+
+#ifdef TTC2SFNT_HEAD_ONLY
+#define TTC2SFNT_HEAD_ONLY_INLINE inline //!< Functions stay `inline` in header only mode.
+#else
+#define TTC2SFNT_HEAD_ONLY_INLINE        //!< Nothing to add when the sources are compiled directly.
+#endif // TTC2SFNT_HEAD_ONLY
+
+#endif // _TTC2SFNT_CONFIG_H_

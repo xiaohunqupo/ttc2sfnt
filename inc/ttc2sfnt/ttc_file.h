@@ -8,7 +8,7 @@
  * called, so a font whose family name is Chinese still lands in a file with that name.
  */
 
-#include "ttc2sfnt/config.h"
+#include "ttc2sfnt/ttc2sfnt_config.h"
 #include "ttc2sfnt/ttc_error.h"
 #include <cstddef>
 #include <cstdint>

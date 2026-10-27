@@ -5,7 +5,7 @@
  * \brief Write the faces of a collection next to each other, named after the font they contain.
  */
 
-#include "ttc2sfnt/config.h"
+#include "ttc2sfnt/ttc2sfnt_config.h"
 #include "ttc2sfnt/ttc_collection.h"
 #include "ttc2sfnt/ttc_error.h"
 #include <cstddef>

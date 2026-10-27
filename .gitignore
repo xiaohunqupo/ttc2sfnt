@@ -19,9 +19,9 @@ cmake_install.cmake
 CTestTestfile.cmake
 generated/
 
-# The configured config.h lives in the build directory; this one only appears when
-# somebody copied config.h.in by hand to build without CMake, and must not be committed.
-inc/ttc2sfnt/config.h
+# The configured ttc2sfnt_config.h lives in the build directory; this one only appears when
+# somebody copied ttc2sfnt_config.h.in by hand to build without CMake, and must not be committed.
+inc/ttc2sfnt/ttc2sfnt_config.h
 
 # IDE noise
 .vs/

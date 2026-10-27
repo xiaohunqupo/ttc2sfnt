@@ -11,7 +11,7 @@
 把 TrueType Collection（`.ttc`）拆成独立的 `.ttf` / `.otf`。C++11，无第三方依赖，默认仅头文件
 （与 [shx_tools](https://github.com/xiaohunqupo/shx_tools) 同一套目录与构建约定）。
 
-版本 0.4.1 ｜ [变更日志](CHANGELOG.md) ｜ [格式说明](docs/ttc_format.md)
+版本 0.5.0 ｜ [变更日志](CHANGELOG.md) ｜ [格式说明](docs/ttc_format.md)
 
 > **改名说明**：本项目原名 `ttc_tools`，因为和另一个同名的 TTC 字体转换库重名（容易被误装、
 > 误引用），已更名为 `ttc2sfnt`。改名同时换掉了全部公开标识：头文件目录 `inc/ttc_tools/` →
@@ -41,7 +41,7 @@
 
 | 目录 | 内容 |
 |---|---|
-| `inc/ttc2sfnt/` | 公开头文件，一个文件一件事；版本号在 `ttc2sfnt.h` 里手写维护，`config.h.in` 只承载 `TTC2SFNT_HEAD_ONLY` 开关（由 CMake 配置成 `<build>/generated/ttc2sfnt/config.h`） |
+| `inc/ttc2sfnt/` | 公开头文件，一个文件一件事；版本号在 `ttc2sfnt.h` 里手写维护，`ttc2sfnt_config.h.in` 只承载 `TTC2SFNT_HEAD_ONLY` 开关（由 CMake 配置成 `<build>/generated/ttc2sfnt/ttc2sfnt_config.h`） |
 | `src/ttc2sfnt/` | 与 `inc` 一一对应的实现，加一个内部用的 `common.h`（字节序、上限、校验和数学） |
 | `sample/` | `ttcsplit`（拆分/列面）与 `ttcdump`（打印表目录并验证校验和） |
 | `test/` | 单文件回归测试，自带合成夹具 |
@@ -52,13 +52,13 @@
 
 ```
 ttc2sfnt.h  ─┬─ 版本宏 TTC2SFNT_VERSION_*（手写维护）
-              ├─ config.h        (生成，只有 TTC2SFNT_HEAD_ONLY)
-              ├─ ttc_error.h     error_code / error_info / error_name
-              ├─ ttc_file.h      整文件读写、目录创建、UTF-8 路径
-              ├─ ttc_sfnt.h      Sfnt：一个面的表目录 + 重建成独立字体
-              ├─ ttc_name.h      name 表解码（UTF-16BE/Latin-1）、文件名规则
-              ├─ ttc_collection.h Collection：集合头、ListTTC / UnzipTTC / UnzipTTCFace
-              └─ ttc_extract.h   UnzipTTCToDir / UnzipTTCFaceToFile
+              ├─ ttc2sfnt_config.h (生成，只有 TTC2SFNT_HEAD_ONLY)
+              ├─ ttc_error.h       error_code / error_info / error_name
+              ├─ ttc_file.h        整文件读写、目录创建、UTF-8 路径
+              ├─ ttc_sfnt.h        Sfnt：一个面的表目录 + 重建成独立字体
+              ├─ ttc_name.h        name 表解码（UTF-16BE/Latin-1）、文件名规则
+              ├─ ttc_collection.h  Collection：集合头、ListTTC / UnzipTTC / UnzipTTCFace
+              └─ ttc_extract.h     UnzipTTCToDir / UnzipTTCFaceToFile
 ```
 
 ## 构建
@@ -80,17 +80,19 @@ ctest --test-dir build --output-on-failure
 [`inc/ttc2sfnt/ttc2sfnt.h`](inc/ttc2sfnt/ttc2sfnt.h) 开头，改版本就是改这一处（并补一条
 `CHANGELOG.md`），构建系统只读取它，不参与生成。
 
-`config.h` 只承载"构建方式"这个开关，它不在源码树里：`CMakeLists.txt` 把
-`inc/ttc2sfnt/config.h.in` 的 `#cmakedefine TTC2SFNT_HEAD_ONLY` 配置到
-`<build>/generated/ttc2sfnt/config.h`，所以构建目录必须排在 `inc` 之前。不用 CMake 时，把
-`config.h.in` 复制成 `inc/ttc2sfnt/config.h`，按注释决定是否 `#define TTC2SFNT_HEAD_ONLY`。
+`ttc2sfnt_config.h` 只承载"构建方式"这个开关，它不在源码树里：`CMakeLists.txt` 把
+`inc/ttc2sfnt/ttc2sfnt_config.h.in` 的 `#cmakedefine TTC2SFNT_HEAD_ONLY` 配置到
+`<build>/generated/ttc2sfnt/ttc2sfnt_config.h`，所以构建目录必须排在 `inc` 之前。不用 CMake
+时，把 `ttc2sfnt_config.h.in` 复制成 `inc/ttc2sfnt/ttc2sfnt_config.h`，按注释决定是否
+`#define TTC2SFNT_HEAD_ONLY`。文件名和 include guard（`_TTC2SFNT_CONFIG_H_`）都带项目名，
+和别的库的 `config.h` 落在同一条 include 路径上也不会认错。
 
 集成方式：
 
 | 方式 | 做法 |
 |---|---|
 | CMake 子项目 | `add_subdirectory(ttc2sfnt)` 后 `target_link_libraries(app PRIVATE ttc2sfnt::ttc2sfnt)` |
-| 手工拷贝（header only） | 拷 `inc/ttc2sfnt/` + `src/ttc2sfnt/*.cpp` + 生成的 `config.h`，两个目录都进 include 路径 |
+| 手工拷贝（header only） | 拷 `inc/ttc2sfnt/` + `src/ttc2sfnt/*.cpp` + 生成的 `ttc2sfnt_config.h`，两个目录都进 include 路径 |
 | 手工拷贝（编译成库） | 只拷 `inc/ttc2sfnt/`，把 `src/ttc2sfnt/*.cpp` 加进工程 |
 
 ## 快速开始
@@ -290,7 +292,7 @@ if (!ttc2sfnt::Sfnt::verify(face.data(), face.size(), &report))
 
 `shx_tools` 做的是反方向：把 AutoCAD `.shx` 的形/字体解析成轮廓，再**写出** `.ttf` / `.otf`。
 两者共用同一段 sfnt 知识（表目录、4 字节对齐、`0xB1B0AFBA` 校验和补偿），但一个写、一个拆；
-目录布局、版本宏的位置（都写在 umbrella 头里、由项目自己维护）、`config.h.in` 与 CMake 的
+目录布局、版本宏的位置（都写在 umbrella 头里、由项目自己维护）、`ttc2sfnt_config.h.in` 与 CMake 的
 `*_HEAD_ONLY` 开关也保持一致。`ttc2sfnt` 不依赖 `shx_tools`，也不与它共享代码——各自作为独立
 的三方库可以被单独取用。
 

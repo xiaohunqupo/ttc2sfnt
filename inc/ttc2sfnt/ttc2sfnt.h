@@ -14,18 +14,18 @@
 
 /*!
  * \name Version
- * Major / minor / patch number of the library, currently 0.4.1. The numbers are maintained here by
+ * Major / minor / patch number of the library, currently 0.5.0. The numbers are maintained here by
  * hand - the build system only reads them - and `CHANGELOG.md` records what changed in each version.
  * Bump them together with a new `CHANGELOG.md` entry.
  */
 ///@{
 #define TTC2SFNT_VERSION_MAJOR 0 //!< Incompatible API changes.
-#define TTC2SFNT_VERSION_MINOR 4 //!< New features, backwards compatible.
-#define TTC2SFNT_VERSION_PATCH 1 //!< Fixes and internal changes.
-#define TTC2SFNT_VERSION_STRING "0.4.1" //!< The three numbers as one string, for logs and `--version`.
+#define TTC2SFNT_VERSION_MINOR 5 //!< New features, backwards compatible.
+#define TTC2SFNT_VERSION_PATCH 0 //!< Fixes and internal changes.
+#define TTC2SFNT_VERSION_STRING "0.5.0" //!< The three numbers as one string, for logs and `--version`.
 ///@}
 
-#include "ttc2sfnt/config.h"
+#include "ttc2sfnt/ttc2sfnt_config.h"
 #include "ttc2sfnt/ttc_error.h"
 #include "ttc2sfnt/ttc_file.h"
 #include "ttc2sfnt/ttc_sfnt.h"

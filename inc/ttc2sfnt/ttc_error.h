@@ -5,7 +5,7 @@
  * \brief Failure reporting: one code per reason, plus an optional printable message.
  */
 
-#include "ttc2sfnt/config.h"
+#include "ttc2sfnt/ttc2sfnt_config.h"
 #include <string>
 
 namespace ttc2sfnt

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _TTC_COMMON_H_
-#define _TTC_COMMON_H_
+#ifndef TTC2SFNT_COMMON_H
+#define TTC2SFNT_COMMON_H
 
 /*!
  * \file common.h
@@ -8,10 +8,12 @@
  *        utilities.
  *
  * This header belongs to `src` and is not part of the public interface. It is included by the
- * sources only, so nothing here has to stay binary compatible.
+ * sources only, so nothing here has to stay binary compatible. In the header only build the sources
+ * are pulled into the public headers, which means this file reaches consumer translation units as
+ * well - hence the project prefixed include guard, which no other library is expected to claim.
  */
 
-#include "ttc2sfnt/config.h"
+#include "ttc2sfnt/ttc2sfnt_config.h"
 #include "ttc2sfnt/ttc_error.h"
 #include <cstddef>
 #include <cstdint>
@@ -166,4 +168,4 @@ namespace ttc2sfnt
 	}
 }
 
-#endif // !_TTC_COMMON_H_
+#endif // TTC2SFNT_COMMON_H
