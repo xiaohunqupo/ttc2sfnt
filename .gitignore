@@ -1,0 +1,39 @@
+# Build output
+build/
+out/
+*.obj
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.exp
+*.tlog
+*.iobj
+*.ipdb
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+generated/
+
+# The configured config.h lives in the build directory; this one only appears when
+# somebody copied config.h.in by hand to build without CMake, and must not be committed.
+inc/ttc2sfnt/config.h
+
+# IDE noise
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Test scratch directory (created and removed by test/test_ttc.cpp)
+ttc2sfnt_test_tmp/
+
+# Fonts are not part of the repository: .ttc files are usually vendor fonts.
+# Drop one in fonts/ to let the tests use it; it stays untracked.
+fonts/*.ttc
+fonts/*.ttf
+fonts/*.otf
