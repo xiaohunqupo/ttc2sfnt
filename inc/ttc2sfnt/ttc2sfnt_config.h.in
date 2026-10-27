@@ -13,15 +13,14 @@
  * that copy, so the build directory has to be on the include path in front of `inc`. Edit the
  * template, never the generated copy under the build directory.
  *
- * Without CMake, copy the template to `inc/ttc2sfnt/ttc2sfnt_config.h` and turn
- *
- *     #cmakedefine TTC2SFNT_HEAD_ONLY
- *
+ * Without CMake, copy the template to `inc/ttc2sfnt/ttc2sfnt_config.h` and turn the build mode line
  * into
  *
  *     #define TTC2SFNT_HEAD_ONLY      // header only build
  *
- * or delete that line for the compiled library.
+ * or delete that line for the compiled library. That line is not quoted verbatim here on purpose:
+ * `configure_file` rewrites the directive wherever it appears, comments included, and the
+ * replacement would close this comment early.
  *
  * The file carries the build mode only - the version of the library is maintained by hand in
  * `inc/ttc2sfnt/ttc2sfnt.h` and is not touched by the build system.
